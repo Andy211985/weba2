@@ -5,7 +5,7 @@ var app = express();
 // Enable CORS (must after initialise it)
 app.use(cors());
 
-var concertAPI = require("./controllerAPI/api-controller");
+var fundraiserAPI = require("./controllerAPI/api-controller");
 
 var bodyparser=require("body-parser");
 
