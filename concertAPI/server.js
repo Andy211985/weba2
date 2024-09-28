@@ -12,7 +12,7 @@ var bodyparser=require("body-parser");
 app.use(bodyparser.json());
 app.use(bodyparser.urlencoded({extended:false}));
 
-app.use("/api/concerts", concertAPI);
+app.use("/api/fundraisers", fundraiserAPI);
 
 
 app.listen(3060);
