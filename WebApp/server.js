@@ -2,7 +2,11 @@ const express=require("express");
 const bodyParser=require("body-parser");
 const path=require("path");
 
-const app=express();
+const cors = require("cors");
+
+var app = express();
+
+app.use(cors());
 
 //to parse URL-encoded & JSON data
 app.use(bodyParser.urlencoded({extended:true}));
