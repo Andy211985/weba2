@@ -1,110 +1,135 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <title>Concert page</title>
-  </head>
-  <body>
-      CONVENTION CENTRE XYZ<br>
 
-      <img src="header.jpg" width="400">
+<head>
+  <title>Search Fundraisers</title>
+  <style>
+    .error {
+      color: red;
+      font-weight: bold;
+    }
+  </style>
+</head>
 
-      <h1>Concert page</h1>
+<body>
 
-      <a href="/"><span>Home</span></a> | <span>Concerts</span>  | <a href="/add_concert"><span>Add a new concert</span></a>
+  <header>
+    <h1>Search Fundraisers</h1>
+  </header>
 
-      <input type="button" onclick="loadConcerts();" value="Refresh"><Br>
+  <nav>
+    <a href="/"><span>Home</span></a> |
+    <a href="/search"><span>Search</span></a> |
+    <a href="/fundraisers"><span>Fundraisers</span></a>
+  </nav>
 
-      <label>ID: </label>
-      <input type="text" id="txtID" placeholder="Enter ID" required>
-      <input type="button" value="Search" onclick="let txtID=document.getElementById('txtID').value; searchByID(txtID);">
+  <section>
+    <form id="searchForm">
+      <h2>Search Criteria</h2>
+      <div>
+        <label>
+          Organizer:
+          <input type="text" id="organizer" name="organizer" />
+          <input type="checkbox" name="criteria" value="organizer" />
+        </label>
+      </div>
+      <div>
+        <label>
+          City:
+          <input type="text" id="city" name="city" />
+          <input type="checkbox" name="criteria" value="city" />
+        </label>
+      </div>
+      <div>
+        <label>
+          Category:
+          <input type="text" id="category" name="category" />
+          <input type="checkbox" name="criteria" value="category" />
+        </label>
+      </div>
+      <br>
+      <button type="button" onclick="searchFundraisers()">Search</button>
+      <button type="button" onclick="clearCheckboxes()">Clear</button>
+    </form>
 
+    <div id="results">
+      <!-- Search results will be displayed here -->
+    </div>
+    <div id="errorMessage" class="error"></div>
+  </section>
 
-      <div id="data"></div>
+  <footer>
+    <p>Contact us at: 123@123.com</p>
+  </footer>
 
-      <script>
-        function loadConcerts(){
-          //call GET API to get a list of Concerts
-          fetch("http://localhost:3060/api/concerts")
-            .then(response => response.json())
-            .then(data => {
+  <script>
+    function searchFundraisers() {
+      const form = document.getElementById('searchForm');
+      const checkboxes = form.querySelectorAll('input[type="checkbox"]:checked');
 
-              const dataDiv=document.getElementById('data');
-              dataDiv.innerHTML="";
+      if (checkboxes.length === 0) {
+        alert("Please select at least one search criteria.");
+        return;
+      }
 
-              if(data.length>0){
-                data.forEach( concert => {
-                    const newP=document.createElement("p");
-                    newP.textContent=`Concert: ${concert.ArtistName}, Location: ${concert.Location}`;
+      const searchParams = new URLSearchParams();
+      checkboxes.forEach(checkbox => {
+        const inputField = document.getElementById(checkbox.value);
+        if (inputField.value) {
+          searchParams.append(checkbox.value, inputField.value);
+        }
+      });
 
-                    dataDiv.appendChild(newP);
+      fetch(`http://localhost:3060/api/fundraisers/search?${searchParams.toString()}`)
+        .then(response => response.json())
+        .then(data => displayResults(data))
+        .catch(error => {
+          console.error('Error fetching fundraisers:', error);
+          displayError("An error occurred while searching for fundraisers.");
+        });
+    }
 
-                    //for delete
-                    const newP2=document.createElement("p");
-                    newP2.innerHTML="<a href='#' onclick='deleteByID("+concert.ConcertID+");'>Delete</a>";
-                    dataDiv.appendChild(newP2);
-                });
+    function displayResults(fundraisers) {
+      const resultsDiv = document.getElementById('results');
+      const errorMessageDiv = document.getElementById('errorMessage');
 
-              }
-              else{
-                dataDiv.textContent="No concert data";
-              }
-            })
-            .catch(error=>{
-              console.error("Error fecthing data",error);
-              document.getElementById('data').textContent="Failed to load data";
-            });
-          }
+      resultsDiv.innerHTML = '';
+      errorMessageDiv.textContent = '';
 
-          function searchByID(id){
-            //call GET API to get a list of Concerts
-            fetch("http://localhost:3060/api/concerts/"+id)
-              .then(response => response.json())
-              .then(data => {
+      if (fundraisers.length === 0) {
+        displayError("No fundraisers found matching the selected criteria.");
+        return;
+      }
 
-                const dataDiv=document.getElementById('data');
-                dataDiv.innerHTML="";
+      fundraisers.forEach(fundraiser => {
+        const fundraiserElement = document.createElement('div');
+        fundraiserElement.className = 'fundraiser';
+        fundraiserElement.innerHTML = `
+          <h3>${fundraiser.CAPTION}</h3>
+          <p><strong>Organiser:</strong> ${fundraiser.ORGANIZER}</p>
+        `;
+        resultsDiv.appendChild(fundraiserElement);
+      });
+    }
 
-                if(data.length>0){
-                  data.forEach( concert => {
-                      const newP=document.createElement("p");
-                      newP.textContent=`Concert: ${concert.ArtistName}, Location: ${concert.Location}`;
+    function displayError(message) {
+      const errorMessageDiv = document.getElementById('errorMessage');
+      errorMessageDiv.textContent = message;
+    }
 
-                      dataDiv.appendChild(newP);
-                  });
+    function clearCheckboxes() {
+      const form = document.getElementById('searchForm');
+      const checkboxes = form.querySelectorAll('input[type="checkbox"]');
+      const inputFields = form.querySelectorAll('input[type="text"]');
 
-                }
-                else{
-                  dataDiv.textContent="No concert data";
-                }
-              })
-              .catch(error=>{
-                console.error("Error fecthing data",error);
-                document.getElementById('data').textContent="Failed to load data";
-              });
-            }
+      checkboxes.forEach(checkbox => checkbox.checked = false);
+      inputFields.forEach(input => input.value = '');
 
-            function deleteByID(id){
-                // Send DELETE request to API
-                fetch('http://localhost:3060/api/concerts/'+id, {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                  alert(data.delete);
-                    if (data.delete === 'success') {
-                        alert("Concert deleted successfully!");
-                    } else if (data.delete === 'error') {
-                        alert("Error: " + data.message);
-                    }
-                })
-                .catch(error => {
-                    console.error("Error:", error);
-                });
-            }
+      document.getElementById('results').innerHTML = '';
+      document.getElementById('errorMessage').textContent = '';
+    }
+  </script>
 
-      </script>
-  </body>
+</body>
+
 </html>

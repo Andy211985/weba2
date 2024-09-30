@@ -1,16 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-      <title>Main page</title>
-  </head>
-  <body>
-      CONVENTION CENTRE XYZ<br>
 
-      <h1>Welcome page</h1>
+<head>
+  <title>Main page</title>
+</head>
 
-       <span>Home</span> |
-       <a href="/concert"><span>Concerts</span></a>  |
-       <a href="/add_concert"><span>Add a new concert</span></a>
+<body>
 
-  </body>
+  <header>
+    <h1>Welcome to Our Non-Profit Organization</h1>
+    <p>Inspiring stories and contact info go here.</p>
+  </header>
+
+  <nav>
+    <a href="/"><span>Home</span></a> |
+    <a href="/search"><span>Search</span></a> |
+    <a href="/fundraisers"><span>Fundraisers</span></a>
+  </nav>
+
+  <section>
+    <h2>Active Fundraisers</h2>
+    <div id="fundraisers">
+      <!-- Fundraisers will be loaded here -->
+    </div>
+  </section>
+
+  <footer>
+    <p>Contact us at: 123@123.com</p>
+  </footer>
+
+  <script>
+    // Fetch and display fundraisers
+    fetch("http://localhost:3060/api/fundraisers/fundraiser")
+      .then(response => response.json())
+      .then(data => {
+        const fundraisersDiv = document.getElementById('fundraisers');
+        fundraisersDiv.innerHTML = "";
+
+        if (data.length > 0) {
+          data.forEach(fundraiser => {
+            const fundraiserDiv = document.createElement("div");
+            fundraiserDiv.className = "fundraiser";
+            fundraiserDiv.innerHTML = `
+                <h3>${fundraiser.CAPTION}</h3>
+                <p><strong>Organiser:</strong> ${fundraiser.ORGANIZER}</p>
+                <p><strong>Target Funding:</strong> ${fundraiser.TARGET_FUNDING} AUD</p>
+                <p><strong>Current Funding:</strong> ${fundraiser.CURRENT_FUNDING} AUD</p>
+                <p><strong>City:</strong> ${fundraiser.CITY}</p>
+                <p><strong>Category:</strong> ${fundraiser.CATEGORY_NAME}</p>
+              `;
+            fundraisersDiv.appendChild(fundraiserDiv);
+
+          });
+        } else {
+          fundraisersDiv.textContent = "No active fundraisers at the moment.";
+        }
+      })
+      .catch(error => {
+        console.error("Error fetching data", error);
+        document.getElementById('fundraisers').textContent = "Failed to load fundraisers.";
+      });
+  </script>
+
+</body>
+
 </html>
