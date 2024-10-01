@@ -107,6 +107,7 @@
         fundraiserElement.innerHTML = `
           <h3>${fundraiser.CAPTION}</h3>
           <p><strong>Organiser:</strong> ${fundraiser.ORGANIZER}</p>
+          <a href="/fundraisers?id=${fundraiser.FUNDRAISER_ID}">More details</a>
         `;
         resultsDiv.appendChild(fundraiserElement);
       });

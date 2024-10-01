@@ -2,36 +2,74 @@
 <html>
 
 <head>
-    <title>Main page</title>
+    <title>Fundraisers</title>
 </head>
 
 <body>
 
 
 
-    <h1>Add a new concert</h1>
+    <h1>Fundraisers details</h1>
 
     <a href="/"><span>Home</span></a> |
     <a href="/search"><span>Search</span></a> |
     <a href="/fundraisers"><span>Fundraisers</span></a>
-    <span>Add a new concert</span>
 
-    <form id="form1" onsubmit="addConcert(); return(false);">
-        <label>ID*: </label>
-        <input type="text" id="txtID" placeholder="Enter ID" required>
 
-        <label>Artist name*: </label>
-        <input type="text" id="txtArtistName" placeholder="Enter artist name" required>
+    <section>
+        <h2>Active Fundraisers</h2>
+        <div id="fundraisers">
+            <!-- Fundraisers will be loaded here -->
+        </div>
+    </section>
 
-        <label>Location*: </label>
-        <input type="text" id="txtLocation" placeholder="Enter location" required>
+    <button class="donate-button" onclick="donate()">Donate</button>
 
-        <input type="reset" value="Clear">
-        <input type="submit" value="Submit">
-    </form>
 
     <script>
-        
+        function getFundraiserIdFromQuery() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('id');
+        }
+
+
+        fetch(`http://localhost:3060/api/fundraisers/fundraiser/${id}`)
+            .then(response => response.json())
+            .then(data => {
+                const fundraisersDiv = document.getElementById('fundraisers');
+                fundraisersDiv.innerHTML = "";
+
+                if (data.length > 0) {
+                    data.forEach(fundraiser => {
+                        const fundraiserDiv = document.createElement("div");
+                        fundraiserDiv.className = "fundraiser";
+                        fundraiserDiv.innerHTML = `
+                <h3>${fundraiser.CAPTION}</h3>
+                <p><strong>Organiser:</strong> ${fundraiser.ORGANIZER}</p>
+                <p><strong>Target Funding:</strong> ${fundraiser.TARGET_FUNDING} AUD</p>
+                <p><strong>Current Funding:</strong> ${fundraiser.CURRENT_FUNDING} AUD</p>
+                <p><strong>City:</strong> ${fundraiser.CITY}</p>
+                <p><strong>Category:</strong> ${fundraiser.CATEGORY_NAME}</p>
+              `;
+                        fundraisersDiv.appendChild(fundraiserDiv);
+
+                    });
+                } else {
+                    fundraisersDiv.textContent = "No active fundraisers at the moment.";
+                }
+            })
+            .catch(error => {
+                console.error("Error fetching data", error);
+                document.getElementById('fundraisers').textContent = "Failed to load fundraisers.";
+            });
+
+        function donate() {
+            alert("This feature is under construction");
+        }
+
+
+
+
 
     </script>
 
