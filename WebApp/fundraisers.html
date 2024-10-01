@@ -3,21 +3,97 @@
 
 <head>
     <title>Fundraisers</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+
+        header {
+            background-color: #4CAF50;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .details {
+            color: white;
+        }
+
+        h1,
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        nav {
+            background-color: #333;
+            overflow: hidden;
+            text-align: center;
+            padding: 10px 0;
+        }
+
+        nav a {
+            color: white;
+            padding: 14px 20px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        nav a:hover {
+            background-color: #ddd;
+            color: black;
+        }
+
+        section {
+            padding: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .fundraiser {
+            background-color: white;
+            margin: 10px 0;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .donate-button {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            text-align: center;
+        }
+
+        .donate-button:hover {
+            background-color: #218838;
+        }
+    </style>
 </head>
 
 <body>
 
+    <header>
+        <h1 class="details">Fundraisers Details</h1>
+    </header>
 
-
-    <h1>Fundraisers details</h1>
-
-    <a href="/"><span>Home</span></a> |
-    <a href="/search"><span>Search</span></a> |
-    <a href="/fundraisers"><span>Fundraisers</span></a>
-
+    <nav>
+        <a href="/">Home</a> |
+        <a href="/search">Search</a> |
+        <a href="/fundraisers">Fundraisers</a>
+    </nav>
 
     <section>
-        <h2>Active Fundraisers</h2>
+        <h2>Fundraiser details</h2>
         <div id="fundraisers">
             <!-- Fundraisers will be loaded here -->
         </div>
@@ -25,13 +101,15 @@
 
     <button class="donate-button" onclick="donate()">Donate</button>
 
-
     <script>
         function getFundraiserIdFromQuery() {
             const params = new URLSearchParams(window.location.search);
             return params.get('id');
         }
 
+        const id = getFundraiserIdFromQuery();
+
+        console.log(`http://localhost:3060/api/fundraisers/fundraiser/${id}`);
 
         fetch(`http://localhost:3060/api/fundraisers/fundraiser/${id}`)
             .then(response => response.json())
@@ -66,11 +144,6 @@
         function donate() {
             alert("This feature is under construction");
         }
-
-
-
-
-
     </script>
 
 </body>
