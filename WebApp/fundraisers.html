@@ -4,6 +4,7 @@
 <head>
     <title>Fundraisers</title>
     <style>
+         /* Basic styling for the body */
         body {
             font-family: Arial, sans-serif;
             line-height: 1.6;
@@ -12,6 +13,7 @@
             background-color: #f4f4f9;
         }
 
+         /* Styling for the header */
         header {
             background-color: #4CAF50;
             color: white;
@@ -19,16 +21,19 @@
             text-align: center;
         }
 
+         /* Styling for the header details text */
         .details {
             color: white;
         }
 
+        /* Center align headings with specific color */
         h1,
         h2 {
             text-align: center;
             color: #333;
         }
 
+        /* Navigation bar styling */
         nav {
             background-color: #333;
             overflow: hidden;
@@ -36,6 +41,7 @@
             padding: 10px 0;
         }
 
+        /* Styling for navigation links */
         nav a {
             color: white;
             padding: 14px 20px;
@@ -43,17 +49,20 @@
             display: inline-block;
         }
 
+        /* Hover effect for navigation links */
         nav a:hover {
             background-color: #ddd;
             color: black;
         }
 
+        /* Section styling */
         section {
             padding: 20px;
             max-width: 800px;
             margin: 0 auto;
         }
 
+         /* Fundraiser card styling */
         .fundraiser {
             background-color: white;
             margin: 10px 0;
@@ -62,6 +71,7 @@
             box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
+         /* Styling for the donate button */
         .donate-button {
             background-color: #28a745;
             color: white;
@@ -74,6 +84,7 @@
             text-align: center;
         }
 
+        /* Hover effect for the donate button */
         .donate-button:hover {
             background-color: #218838;
         }
@@ -82,16 +93,19 @@
 
 <body>
 
+     <!-- Header with title -->
     <header>
         <h1 class="details">Fundraisers Details</h1>
     </header>
 
+    <!-- Navigation bar -->
     <nav>
         <a href="/">Home</a> |
         <a href="/search">Search</a> |
         <a href="/fundraisers">Fundraisers</a>
     </nav>
 
+    <!-- Main content section -->
     <section>
         <h2>Fundraiser details</h2>
         <div id="fundraisers">
@@ -99,22 +113,27 @@
         </div>
     </section>
 
+    <!-- Donate button -->
     <button class="donate-button" onclick="donate()">Donate</button>
 
     <script>
+         // Function to get fundraiser ID from the URL query string
         function getFundraiserIdFromQuery() {
             const params = new URLSearchParams(window.location.search);
             return params.get('id');
         }
 
+        // Retrieve the fundraiser ID
         const id = getFundraiserIdFromQuery();
 
+         // Fetch fundraiser data from the API
         fetch(`http://localhost:3060/api/fundraisers/fundraiser/${id}`)
             .then(response => response.json())
             .then(data => {
                 const fundraisersDiv = document.getElementById('fundraisers');
                 fundraisersDiv.innerHTML = "";
 
+                // Check if data is returned and display it
                 if (data.length > 0) {
                     data.forEach(fundraiser => {
                         const fundraiserDiv = document.createElement("div");
@@ -138,7 +157,8 @@
                 console.error("Error fetching data", error);
                 document.getElementById('fundraisers').textContent = "Failed to load fundraisers.";
             });
-
+        
+        // Function to handle donate button click    
         function donate() {
             alert("This feature is under construction");
         }
